@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<body>
+
+<form action="/auth/register/" method="post">
+
+    {% csrf_token %}
+    <p>
+    {{ form.user_name.label_tag}}
+    {{ form.user_name}}
+    </p>
+
+    <p>
+    {{ form.user_email.label_tag}}
+    {{ form.user_email}}
+    </p>
+
+    <p>
+    {{ form.user_password.label_tag}}
+    {{ form.user_password}}
+    </p>
+    <p>
+    {{ form.user_password2.label_tag}}
+    {{ form.user_password2}}
+    </p>
+    <span>{{ form.user_name.errors }}</span>
+    <span>{{ form.user_email.errors }}</span>
+    <span>{{ form.user_password.errors }}</span>
+    <span>{{ form.user_password2.errors }}</span>
+    {{ form.non_field_errors }}
+    <input type="submit" value="注册">
+
+</form>
+<a href="{% url 'authin:login' %}?next={{ request.path }}">登录</a>
+</body>
+</html>

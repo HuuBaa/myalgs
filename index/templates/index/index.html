@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vis Algs</title>
+</head>
+<body>
+<div>
+    有点难啊！
+    {% if user %}
+        {{ user.user_email }}
+    {% else %}
+        <p>stranger</p>
+
+        <a href="{% url 'authin:login' %}?next={{ request.path }}">登录</a>
+    {% endif %}
+</div>
+</body>
+</html>
