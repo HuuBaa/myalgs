@@ -5,5 +5,7 @@ from . import views
 urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^register/$', views.register, name='register'),
-    url(r'^logout/$', views.logout, name='logout')
+    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^unconfirmed/$',views.unconfirmed,name='unconfirmed'),
+    url(r'^confirm/(?P<token>.*)$',views.confirm,name='confirm')
 ]

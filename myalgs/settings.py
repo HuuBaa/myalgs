@@ -47,9 +47,9 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'authin.AuthinMiddleware.UnConfirmMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authin.AuthinMiddleware.UnConfirmMiddleware',
 ]
 
 ROOT_URLCONF = 'myalgs.urls'
@@ -121,3 +121,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = '742790905@qq.com'
+EMAIL_HOST_PASSWORD = os.environ.get('MAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = '<huu django>742790905@qq.com'

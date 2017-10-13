@@ -1,11 +1,12 @@
 from django.shortcuts import render, reverse
 from . import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from .models import User
 import hashlib
-from decorators import loginrequired
+from tools import loginrequired,cookie2user
 from myalgs.settings import SECRET_KEY
-
+from django.core.mail import send_mail
+from django.contrib import  messages
 
 def setcookie(response, user_id, user_email, user_pass_hash, secret_key):
     s = '%s-%s-%s' % (user_email, user_pass_hash, secret_key)
@@ -46,7 +47,6 @@ def login(request):
 
 
 def register(request):
-
     if request.method == 'POST':
         form = forms.RegisterForm(request.POST)
         if form.is_valid():
@@ -72,3 +72,25 @@ def logout(requset, **kw):
     response = HttpResponseRedirect(reverse('index:index'))
     response.delete_cookie('algs')
     return response
+
+@loginrequired
+def unconfirmed(request,**kw):
+    user=kw.get('user','')
+    confirm_token=user.generate_confirm_token()
+    confirm_url=reverse('authin:confirm',args=[confirm_token])
+    try:
+        send_mail('确认邮箱', 'http://127.0.0.1:8000'+confirm_url, '742790905@qq.com',
+              ['742790905@qq.com'])
+        messages.error(request,'发送了邮件')
+    except:
+        pass
+    return render(request,'auth/unconfirmed.html')
+
+@loginrequired
+def confirm(request,token,**kw):
+    user=kw.get('user','')
+    confirm_status=user.email_confirm(token)
+    if confirm_status == False:
+        return HttpResponse('无效的token')
+        # return HttpResponseRedirect(reverse('index:index'))
+    return HttpResponse(confirm_status)

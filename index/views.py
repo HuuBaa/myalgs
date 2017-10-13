@@ -1,7 +1,6 @@
 from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
-from authin.models import User
-from decorators import loginrequired, cookie2user
+from tools import loginrequired, cookie2user
 
 # Create your views here.
 

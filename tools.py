@@ -25,11 +25,11 @@ def cookie2user(cookie):
 # 使用了这个装饰器的view，可以从kw['user']获取到user
 
 def loginrequired(func):
-    def decofunc(request, **kw):
+    def decofunc(request,*args,**kw):
         cookie = request.COOKIES.get('algs', '')
         user = cookie2user(cookie)
         if user is not None:
-            return func(request, user=user)
+            return func(request, user=user,*args,**kw)
         else:
             return HttpResponseRedirect(reverse('authin:login'))
     return decofunc
