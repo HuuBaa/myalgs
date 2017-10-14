@@ -5,12 +5,13 @@
     <title>未确认</title>
 </head>
 <body>
-    <p>你的尚未确认邮箱，点击发送邮件！</p>
+    <p>邮件邮件发送，你的尚未确认邮箱，点击<a href="{% url 'authin:resendemail' %}">重新发送邮件</a>！</p>
     {% if messages %}
         {% for message in messages %}
             <p{% if message.tags %} class="{{ message.tags }}" {% endif %} style="padding: 10px">{{ message }}</p>
         {% endfor %}
     {% endif %}
+
 
 </body>
 </html>

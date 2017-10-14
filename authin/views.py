@@ -3,18 +3,10 @@ from . import forms
 from django.http import HttpResponseRedirect,HttpResponse
 from .models import User
 import hashlib
-from tools import loginrequired,cookie2user
+from tools import loginrequired,cookie2user,send_email_new,setcookie
 from myalgs.settings import SECRET_KEY
-from django.core.mail import send_mail
 from django.contrib import  messages
 
-def setcookie(response, user_id, user_email, user_pass_hash, secret_key):
-    s = '%s-%s-%s' % (user_email, user_pass_hash, secret_key)
-    s = hashlib.sha1(s.encode()).hexdigest()
-    L = ['UID:' + str(user_id), s]
-    cookie = '-'.join(L)
-    response.set_cookie('algs', cookie, 60)
-    return response
 
 # Create your views here.
 
@@ -60,6 +52,9 @@ def register(request):
                 user_email=user_email,
                 user_pass_hash=user_pass_hash)
             u.save()
+            confirm_token = u.generate_confirm_token()
+            confirm_url = 'http://127.0.0.1'+reverse('authin:confirm', args=[confirm_token])
+            send_email_new('确认', confirm_url, '742790905@qq.com', u.user_email)
             return HttpResponseRedirect(reverse('authin:login'))
     else:
         form = forms.RegisterForm()
@@ -75,22 +70,23 @@ def logout(requset, **kw):
 
 @loginrequired
 def unconfirmed(request,**kw):
-    user=kw.get('user','')
-    confirm_token=user.generate_confirm_token()
-    confirm_url=reverse('authin:confirm',args=[confirm_token])
-    try:
-        send_mail('确认邮箱', 'http://127.0.0.1:8000'+confirm_url, '742790905@qq.com',
-              ['742790905@qq.com'])
-        messages.error(request,'发送了邮件')
-    except:
-        pass
     return render(request,'auth/unconfirmed.html')
 
 @loginrequired
 def confirm(request,token,**kw):
-    user=kw.get('user','')
+    user=kw.get('user')
     confirm_status=user.email_confirm(token)
     if confirm_status == False:
         return HttpResponse('无效的token')
         # return HttpResponseRedirect(reverse('index:index'))
     return HttpResponse(confirm_status)
+
+
+@loginrequired
+def resendemail(request,**kw):
+    user=kw.get('user')
+    confirm_token = user.generate_confirm_token()
+    confirm_url = 'http://127.0.0.1' + reverse('authin:confirm', args=[confirm_token])
+    send_email_new('确认', confirm_url, '742790905@qq.com', user.user_email)
+    messages.info(request,'已经重新发送')
+    return HttpResponseRedirect(reverse('index:index'))

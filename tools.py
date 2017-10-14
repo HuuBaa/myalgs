@@ -5,6 +5,17 @@ from django.http import HttpResponseRedirect
 from authin.models import User
 import hashlib
 from myalgs.settings import SECRET_KEY
+from django.core.mail import send_mail
+
+
+
+def setcookie(response, user_id, user_email, user_pass_hash, secret_key):
+    s = '%s-%s-%s' % (user_email, user_pass_hash, secret_key)
+    s = hashlib.sha1(s.encode()).hexdigest()
+    L = ['UID:' + str(user_id), s]
+    cookie = '-'.join(L)
+    response.set_cookie('algs', cookie, 60)
+    return response
 
 
 def cookie2user(cookie):
@@ -33,3 +44,11 @@ def loginrequired(func):
         else:
             return HttpResponseRedirect(reverse('authin:login'))
     return decofunc
+
+
+def send_email_new(subject,body,from_email,*to_emails):
+    try:
+        send_mail(subject, body, from_email,
+              to_emails, fail_silently=False)
+    except:
+        pass

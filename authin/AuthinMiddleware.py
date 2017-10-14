@@ -10,7 +10,7 @@ class UnConfirmMiddleware(deprecation.MiddlewareMixin):
     def process_request(self, request):
         cookie = request.COOKIES.get('algs', '')
         user = cookie2user(cookie)
-        exurls=['/auth/logout/','/auth/login','/auth/register','/auth/unconfirmed/']
+        exurls=['/auth/logout/','/auth/login','/auth/register','/auth/unconfirmed/','/auth/resendemail/']
         if request.path in exurls or request.path.startswith('/auth/confirm/'):
             return None
         if (user is not None and (user.user_confirmed == False)):
