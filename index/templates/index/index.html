@@ -3,17 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Vis Algs</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
 <body>
-<div>
+<div id="app">
     有点难啊！
     {% if user %}
-        {{ user.user_email }}
+        <p v-text="email"></p>
+        <p v-text="name"></p>
     {% else %}
         <p>stranger</p>
 
         <a href="{% url 'authin:login' %}?next={{ request.path }}">登录</a>
     {% endif %}
+    <ul>
+        <li v-for="(friend,index) in friends"  v-text="'序号'+index+' '+friend.height" v-on:click="fuck(friend.height)"></li>
+    </ul>
+    <my-component message="huu" cool="cool"></my-component>
 </div>
+<div id="app2">
+    <ul>
+        <todo-item v-for="item in todoList" v-bind:todo="item"></todo-item>
+    </ul>
+
+</div>
+
+<script>
+    var app_data={
+        email:"{{ user.user_email }}",
+        name:"{{ user.user_name }}",
+        friends:[{height:'2312'},{height:'21312'}]
+    };
+
+    Vue.component('my-component', {
+        props:['message','cool'],
+        template: "<div v-text='message+cool'></div>",
+{#        data:function(){#}
+{#            return {message:"Huu"}#}
+{#        }#}
+    });
+
+    var app = new Vue({
+        el:"#app",
+        data:app_data,
+        methods:{
+            fuck:function(height){alert(height+this.email)}
+        }
+
+    });
+
+
+
+
+    Vue.component('todo-item',{
+        props:['todo'],
+        template:"<li v-text='todo.text'></li>"
+    });
+
+    var app2=new Vue({
+        el:"#app2",
+        data: {
+            todoList:[
+                {text:"sleep"},
+                {text:"eat"},
+                {text:"play"}
+            ]
+        }
+    });
+
+
+</script>
 </body>
 </html>
